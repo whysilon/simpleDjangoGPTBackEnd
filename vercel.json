@@ -5,7 +5,11 @@
             "use": "@vercel/python",
             "config": {
                 "maxLambdaSize": "15mb"
-            },
+            }
+        }
+    ],
+    "functions": [
+        {
             "runtime": "python3.9"
         }
     ],
