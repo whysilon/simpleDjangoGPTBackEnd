@@ -7,6 +7,7 @@ from chat_api.serializers import ChatResponseSerializer
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import json
 
 @api_view(['POST'])
 def askChat(request):
@@ -14,9 +15,11 @@ def askChat(request):
         # Initialising and checking variables
         llm = ChatOpenAI()
         output_parser = StrOutputParser()
-        codeSmell = request.GET["codeSmell"]
-        quality = request.GET["quality"]
-        code = request.GET["code"]
+        
+        data = json.loads(request.body)
+        codeSmell = data["codeSmell"]
+        quality = data["quality"]
+        code = data["code"]
 
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
         systemPrompt = """
