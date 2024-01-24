@@ -21,7 +21,7 @@ def askChat(request):
         quality = data["quality"]
         code = data["code"]
         startLine = data["startLine"]
-        langauge = data["langauge"]
+        langauge = data["language"]
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
         systemPrompt = """
         You are a teaching assistant who needs to explain the problem of the code given to the student.
