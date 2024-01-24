@@ -21,7 +21,7 @@ def askChat(request):
         quality = data["quality"]
         code = data["code"]
         startLine = data["startLine"]
-
+        langauge = data["langauge"]
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
         systemPrompt = """
         You are a teaching assistant who needs to explain the problem of the code given to the student.
@@ -37,7 +37,7 @@ def askChat(request):
         If you do not know the answer, just say that "I do not know" and do not try to make up an answer
         """
         defaultPrompt = f"""
-        Please review this code snippet which starts at {startLine}
+        Please review this {langauge} code snippet which starts at {startLine}
         """
 
         prompt = ChatPromptTemplate.from_messages([
@@ -46,13 +46,12 @@ def askChat(request):
         ("user", "{codeSmell}"),
         ("user","{quality}"),
         ("user","{code}"),
-        ("user","{startLine}")
         ])
         chain = prompt | llm | output_parser
         answer = chain.invoke({"codeSmell":codeSmell,
                       "quality":quality,
                       "code":code,
-                      "startLine":startLine})
+                      })
         # serializer = ChatResponseSerializer(answer)
 
         return Response(answer)
