@@ -58,4 +58,4 @@ def askChat(request):
 
     except Exception as e:
         print("Exception:",e)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(e, status=status.HTTP_400_BAD_REQUEST)
