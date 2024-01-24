@@ -8,7 +8,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-@api_view(['GET'])
+@api_view(['POST'])
 def askChat(request):
     try:
         # Initialising and checking variables
@@ -17,11 +17,6 @@ def askChat(request):
         codeSmell = request.GET["codeSmell"]
         quality = request.GET["quality"]
         code = request.GET["code"]
-        startLine = int(request.GET["startLine"])
-        endLine = int(request.GET["endLine"])
-        # Comment this snippet out if the code coming in is an array
-        codeLbyL = code.split('\n')
-        extractedCode = '\n'.join(codeLbyL[startLine-1:endLine])
 
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
         systemPrompt = """
@@ -51,7 +46,7 @@ def askChat(request):
         chain = prompt | llm | output_parser
         answer = chain.invoke({"codeSmell":codeSmell,
                       "quality":quality,
-                      "code":extractedCode,})
+                      "code":code,})
         # serializer = ChatResponseSerializer(answer)
 
         return Response(answer)
