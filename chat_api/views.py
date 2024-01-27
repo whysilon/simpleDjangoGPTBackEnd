@@ -13,7 +13,7 @@ import json
 def askChat(request):
     try:
         # Initialising and checking variables
-        llm = ChatOpenAI()
+        llm = ChatOpenAI(model_name="ft:gpt-3.5-turbo-0613:personal::8lainp5L")
         output_parser = StrOutputParser()
         
         data = json.loads(request.body)
@@ -26,14 +26,6 @@ def askChat(request):
         systemPrompt = """
         You are a teaching assistant who needs to explain the problem of the code given to the student.
         Use the following code smell, code and the software quality impacted to explain what is wrong with the code.
-        Strictly answer in JSON format and follow the example given below
-        ===
-        {{
-        "Explanation" : [Explanation of the code smell],
-        "Solution" : [Brief Description of the solution],
-        "Updated Code" : [Fix of the updated code]
-        }}
-        ===
         If you do not know the answer, just say that "I do not know" and do not try to make up an answer
         """
         defaultPrompt = f"""
