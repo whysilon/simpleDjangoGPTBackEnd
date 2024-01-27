@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from chat_api.models import ChatResponse
 from chat_api.serializers import ChatResponseSerializer
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate
+)
 from langchain_core.output_parsers import StrOutputParser
 import json
 
@@ -13,7 +17,7 @@ import json
 def askChat(request):
     try:
         # Initialising and checking variables
-        llm = ChatOpenAI(model_name="ft:gpt-3.5-turbo-0613:personal::8lainp5L")
+        llm = ChatOpenAI(model_name="ft:gpt-3.5-turbo-0613:personal::8lainp5L",temperature=0)
         output_parser = StrOutputParser()
         
         data = json.loads(request.body)
@@ -21,29 +25,33 @@ def askChat(request):
         quality = data["quality"]
         code = data["code"]
         startLine = data["startLine"]
-        langauge = data["language"]
+        language = data["language"]
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
-        systemPrompt = """
+        systemPrompt = """      
         You are a teaching assistant who needs to explain the problem of the code given to the student.
         Use the following code smell, code and the software quality impacted to explain what is wrong with the code and fix the code.
+        The answer should contains 3 keys: Explanation, Solution, Updated Code
         If you do not know how to fix the code, leave Updated Code empty.
         """
-        defaultPrompt = f"""
-        Please review this {langauge} code snippet which starts at {startLine}
+        defaultPrompt = """
+        Code Smell : {codeSmell}
+        Quality impacted: {quality}
+        Code: {code}
+        Code language: {language}
+        Start Line: {startLine}
         """
 
         prompt = ChatPromptTemplate.from_messages([
-        ("system", systemPrompt),
-        ("user", defaultPrompt),
-        ("user", "{codeSmell}"),
-        ("user","{quality}"),
-        ("user","{code}"),
+            SystemMessagePromptTemplate.from_template(systemPrompt),
+            HumanMessagePromptTemplate.from_template(defaultPrompt)
         ])
         chain = prompt | llm | output_parser
         answer = chain.invoke({"codeSmell":codeSmell,
-                      "quality":quality,
-                      "code":code,
-                      })
+                "quality":quality,
+                "code":code,
+                "language": language,
+                "startLine": startLine,
+                })
         # serializer = ChatResponseSerializer(answer)
 
         return Response(answer)
