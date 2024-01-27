@@ -25,8 +25,8 @@ def askChat(request):
         # Using normal chat-gpt 3.5 turbo (switch to fine-tune when done)
         systemPrompt = """
         You are a teaching assistant who needs to explain the problem of the code given to the student.
-        Use the following code smell, code and the software quality impacted to explain what is wrong with the code.
-        If you do not know the answer, just say that "I do not know" and do not try to make up an answer
+        Use the following code smell, code and the software quality impacted to explain what is wrong with the code and fix the code.
+        If you do not know how to fix the code, leave Updated Code empty.
         """
         defaultPrompt = f"""
         Please review this {langauge} code snippet which starts at {startLine}
